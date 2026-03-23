@@ -34,7 +34,7 @@ Les principaux objectifs de ce projet sont :
 - Git / GitHub : gestion de version et partage du projet
 
 ## Structure du projet
-
+````
 itbeauty/
 │
 ├── index.html
@@ -43,23 +43,24 @@ itbeauty/
 ├── style.css
 ├── salon_reservation.sql
 └── README.md
-
+````
 ### Description des fichiers
 
-- index.html : 
+- **index.html** : 
 Page d’accueil du site. Elle présente le service et permet d’accéder au système de réservation.
 
-- reservation.php:
+- **reservation.php**:
 Script PHP chargé de gérer la réservation : affichage des créneaux disponibles, traitement des données envoyées par l’utilisateur et enregistrement des réservations dans la base de données.
 
-- connexion.php:
+-**connexion.php**:
 Fichier permettant d’établir la connexion entre l’application PHP et la base de données MySQL.
 
-- style.css:
+- **style.css**:
 Feuille de style utilisée pour la mise en forme visuelle du site.
 
-- salon_reservation.sql:
+- **salon_reservation.sql**:
 Fichier contenant la structure et le script SQL de la base de données utilisée par l’application.
+````
 +-------------+        +----------------+        +-------------+
 |   clients   |        |  reservations  |        |  services   |
 +-------------+        +----------------+        +-------------+
@@ -69,14 +70,14 @@ Fichier contenant la structure et le script SQL de la base de données utilisée
 +-------------+        | date_reservation       | prix         |
                        | heure_reservation      +-------------+
                        +----------------+
-
+````
 ### Installation et utilisation
 1. Installation du projet
 
 Placer le dossier du projet dans le répertoire :
-
+````
 C:\xampp\htdocs\
-
+````
 2. Démarrer le serveur local
 
 Lancer XAMPP puis démarrer :
@@ -86,12 +87,14 @@ Apache + MySQL
 - Ouvrir phpMyAdmin
 - Créer une base de données
 - Importer le fichier :
+````
 salon_reservation.sql
-
+````
 4. Lancer l’application
 Ouvrir le navigateur et accéder à :
+````
 http://localhost/itbeauty/index.html
-
+````
 ## Fonctionnalités principales
 
 - Consultation des services disponibles et des crénaux horaires
