@@ -108,6 +108,7 @@ Le projet répond à un besoin réel et peut être réalisé avec des technologi
 
 ## Cahier des charges 
 Objectif : dire exactement ce que le site doit faire
+
 Fonctionnalités obligatoires:
 - voir les services
 - voir les horaires
