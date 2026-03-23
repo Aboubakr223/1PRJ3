@@ -26,6 +26,7 @@ Les principaux objectifs de ce projet sont :
 
 ## Technologies utilisées
 
+- Visual studio code : environnement de programation
 - HTML : structure des pages web
 - CSS : mise en forme et design de l’interface
 - PHP : gestion de la logique applicative et des réservations
