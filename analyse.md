@@ -1,4 +1,4 @@
-# Analyse du besoin et concurentielle du salon de coiffure IT Beauty
+# Analyse du besoin, concurentiel et cahier des charges du salon de coiffure IT Beauty
 
 ## Présentation du projet et problème résolu
 
@@ -62,9 +62,9 @@ Le projet proposé vise à créer une solution :
 - facile à utiliser
 - gratuite ou peu coûteuse
 
-## Personas
+## Scénarios d'utilisation
 
-Persona 1 - Client régulier
+Cas 1 - Client régulier
 Nom : Karim
  Âge : 20 ans
  Profession : étudiant
@@ -76,7 +76,7 @@ Besoins :
 Objectif :
 - Prendre rendez-vous en moins de 1 minute
   
-Persona 2 - Client occasionnel
+Cas 2 - Client occasionnel
 Nom : Sophie
  Âge : 42 ans
  Profession : employée
@@ -87,7 +87,7 @@ Besoins :
 - être sûre du rendez-vous
 Objectif : Pouvoir réserver le soir ou le week-end
 
-Persona 3 – Gérant du salon
+Cas 3 – Gérant du salon
 Nom : Diallo
  Âge : 50 ans
  Profession : coiffeur
@@ -98,6 +98,44 @@ Besoins :
 - ne pas répondre au téléphone toute la journée
 Objectif : Avoir un planning clair et organisé
 
+## Cahier des charges 
+Objectif : dire exactement ce que le site doit faire
+#### Page vitrine
+- Présentation du salon (nom, description, photos)
+- Liste des services proposés avec durée et prix
+- Horaires d'ouverture par jour de la semaine
+- Coordonnées et localisation (adresse, téléphone)
+- Témoignages clients (optionnel mais valorisé)
+#### Système de réservation
+- Sélection du service dans une liste déroulante
+- Calendrier interactif montrant les créneaux disponibles
+- Affichage en temps réel des disponibilités
+- Formulaire client : nom, prénom, email, téléphone
+- Validation côté client et serveur des données
+- Confirmation immédiate avec récapitulatif
+- Gestion des conflits
+- Vérification en temps réel de la disponibilité
+- Empêcher la double réservation du même créneau
+- Gestion des services de durées différentes
+- Blocage automatique des créneaux réservés
+#### Notifications email
+- Email de confirmation automatique au client
+- Email de notification au salon
+- Template HTML professionnel avec logo
+- Informations complètes : service, date, heure, client
+#### Interface administration
+- Connexion sécurisée (login/password)
+- Vue agenda complète avec toutes les réservations
+- Possibilité de valider/annuler une réservation
+- Ajout/modification des créneaux de disponibilité
+- Gestion des services (nom, durée, prix)
+
+#### Contraintes techniques
+- PHP
+- MySQL
+- HTML / CSS / JS
+- site simple, pas d’application mobile
+
 ## Conclusion
 
 Le développement d’un système de réservation en ligne permettra :
@@ -106,24 +144,6 @@ Le développement d’un système de réservation en ligne permettra :
 - de moderniser le service
 - de réduire les erreurs
 Le projet répond à un besoin réel et peut être réalisé avec des technologies web simples.
-
-## Cahier des charges 
-Objectif : dire exactement ce que le site doit faire
-
-Fonctionnalités obligatoires:
-- voir les services
-- voir les horaires
-- réserver
-- enregistrer en base
-- éviter double réservation
-- interface admin
-- confirmation de réservation par e-mail
-
-#### Contraintes techniques
-- PHP
-- MySQL
-- HTML / CSS / JS
-- site simple, pas d’application mobile
 
 
 #### Utilisateurs
