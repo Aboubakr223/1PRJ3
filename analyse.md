@@ -2,7 +2,7 @@
 
 ## Présentation du projet et problème résolu
 
-Le projet consiste à développer un site web intéractif de réservation en ligne pour le salon de coiffure IT-Beauty permettant aux clients de consulter les services proposés et de réserver un rendez-vous à distance.
+Un salon de coiffure IT-Beauty souhaite moderniser sa prise de rendez-vous et offrir à ses clients la possibilité de réserver en ligne 24h/24.
 Actuellement, le salon utilise uniquement la réservation par téléphone, ce qui entraîne plusieurs problèmes :
 - perte de temps pour répondre aux appels
 - impossibilité de réserver en dehors des horaires d’ouverture
@@ -45,6 +45,7 @@ Fonctionnalités nécessaires :
 - choix de la date et de l’heure
 - enregistrement en base de données
 - interface administrateur simple
+- notifications par e-mail pour client et administrateur
   
 ## Analyse concurrentielle 
 De nombreux salons utilisent déjà des systèmes de réservation en ligne comme :
