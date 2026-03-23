@@ -74,9 +74,9 @@ Lancer XAMPP puis démarrer :
 Apache + MySQL
 
 3. Importer la base de données:
-Ouvrir phpMyAdmin
-Créer une base de données
-Importer le fichier :
+- Ouvrir phpMyAdmin
+- Créer une base de données
+- Importer le fichier :
 salon_reservation.sql
 
 4. Lancer l’application
