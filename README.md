@@ -26,12 +26,12 @@ Les principaux objectifs de ce projet sont :
 
 ## Technologies utilisées
 
-HTML : structure des pages web
-CSS : mise en forme et design de l’interface
-PHP : gestion de la logique applicative et des réservations
-MySQL : stockage des données (services, horaires, réservations)
-XAMPP : environnement de développement local (Apache + MySQL)
-Git / GitHub : gestion de version et partage du projet
+- HTML : structure des pages web
+- CSS : mise en forme et design de l’interface
+- PHP : gestion de la logique applicative et des réservations
+- MySQL : stockage des données (services, horaires, réservations)
+- XAMPP : environnement de développement local (Apache + MySQL)
+- Git / GitHub : gestion de version et partage du projet
 
 ## Structure du projet
 
@@ -46,19 +46,19 @@ itbeauty/
 
 ### Description des fichiers
 
-index.html : 
+- index.html : 
 Page d’accueil du site. Elle présente le service et permet d’accéder au système de réservation.
 
-reservation.php:
+- reservation.php:
 Script PHP chargé de gérer la réservation : affichage des créneaux disponibles, traitement des données envoyées par l’utilisateur et enregistrement des réservations dans la base de données.
 
-connexion.php:
+- connexion.php:
 Fichier permettant d’établir la connexion entre l’application PHP et la base de données MySQL.
 
-style.css:
+- style.css:
 Feuille de style utilisée pour la mise en forme visuelle du site.
 
-salon_reservation.sql:
+- salon_reservation.sql:
 Fichier contenant la structure de la base de données utilisée par l’application.
 
 ### Installation et utilisation
