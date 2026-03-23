@@ -5,7 +5,7 @@
 
 ## Présentation du projet
 
-Ce projet consiste à développer une application web simple complète de réservation de services pour un salon (coiffure, esthétique ou autre type de prestation).
+Ce projet consiste à développer une application web simple complète de réservation de services pour le salon IT-Beauty (coiffure, esthétique ou autre type de prestation).
 L’objectif est de permettre à un utilisateur de consulter les services proposés, sélectionner un créneau horaire disponible et effectuer une réservation en ligne.
 Il permet aussi aux administrateurs du salon à consulter et gérer les rendez-vous.
 
