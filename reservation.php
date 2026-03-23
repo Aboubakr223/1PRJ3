@@ -1,204 +1,281 @@
 <?php
-// reservation.php
+// reservation.php — Calendrier libre futur + créneaux transparents
 
-// Affiche les erreurs pendant le développement
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once 'connexion.php'; // fichier qui définit $pdo
+require_once 'connexion.php'; // ton $pdo
 
 $errors  = [];
 $success = false;
-$form_data = $_POST ?? [];
 
-// Récupération des services (seulement les colonnes qui existent vraiment)
+// Aujourd'hui
+$today = date('Y-m-d');
+
+// Services
 try {
     $services = $pdo->query("SELECT id, nom FROM services ORDER BY nom")
-                    ->fetchAll(PDO::FETCH_ASSOC);
+                    ->fetchAll(PDO::FETCH_ASSOC) ?: [];
 } catch (PDOException $e) {
-    $errors[] = "Erreur chargement services : " . $e->getMessage();
-    $services = [];
+    $errors[] = "Erreur services : " . $e->getMessage();
 }
 
-// Traitement du formulaire
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Créneaux de base
+$base_creneaux = ['09:00','09:30','10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00'];
 
+// POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmer'])) {
     $service_id = filter_input(INPUT_POST, 'service_id', FILTER_VALIDATE_INT);
-    $date_rdv   = trim($_POST['date_rdv']   ?? '');
-    $heure_rdv  = trim($_POST['heure_rdv']  ?? '');
+    $date       = trim($_POST['date_rdv']   ?? '');
+    $heure      = trim($_POST['heure_rdv']  ?? '');
     $prenom     = trim($_POST['prenom']     ?? '');
     $nom        = trim($_POST['nom']        ?? '');
     $email      = trim($_POST['email']      ?? '');
-    $telephone  = trim($_POST['telephone']  ?? '');
+    $tel        = trim($_POST['tel']        ?? '');
 
-    // Validation de base
-    if (!$service_id || !$date_rdv || !$heure_rdv || !$prenom || !$nom || !$email) {
-        $errors[] = "Tous les champs obligatoires doivent être remplis.";
-    }
-    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Adresse email invalide.";
-    }
-    elseif (strtotime($date_rdv) < strtotime(date('Y-m-d'))) {
-        $errors[] = "La date ne peut pas être dans le passé.";
-    }
-    else {
-        // Vérification si le créneau est déjà pris (version simple)
-        $stmt = $pdo->prepare("
-            SELECT COUNT(*) 
-            FROM reservations 
-            WHERE date_rdv = ? AND heure_rdv = ?
-        ");
-        $stmt->execute([$date_rdv, $heure_rdv]);
-        
+    if (!$service_id || !$date || !$heure || !$prenom || !$nom || !$email) {
+        $errors[] = "Tous les champs * sont obligatoires.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Email invalide.";
+    } else {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM reservations WHERE date_rdv = ? AND heure_rdv = ?");
+        $stmt->execute([$date, $heure]);
         if ($stmt->fetchColumn() > 0) {
-            $errors[] = "Ce créneau est déjà réservé.";
-        }
-        else {
-            // Insertion
+            $errors[] = "Créneau déjà pris.";
+        } else {
             try {
                 $stmt = $pdo->prepare("
                     INSERT INTO reservations 
                     (service_id, date_rdv, heure_rdv, nom_client, email_client, telephone, statut)
                     VALUES (?, ?, ?, ?, ?, ?, 'en_attente')
                 ");
-                $stmt->execute([
-                    $service_id,
-                    $date_rdv,
-                    $heure_rdv,
-                    trim("$prenom $nom"),
-                    $email,
-                    $telephone ?: null
-                ]);
+                $stmt->execute([$service_id, $date, $heure, "$prenom $nom", $email, $tel ?: null]);
 
                 $success = true;
-                $form_data = []; // reset formulaire après succès
-            }
-            catch (PDOException $e) {
-                $errors[] = "Erreur lors de l'enregistrement : " . $e->getMessage();
+                header("Location: reservation.php?success=1");
+                exit;
+            } catch (PDOException $e) {
+                $errors[] = "Erreur BDD : " . $e->getMessage();
             }
         }
     }
 }
+
+if (isset($_GET['success'])) $success = true;
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Réserver – IT Beauty</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { background: #f8f9fa; padding-bottom: 3rem; }
-    .card { border: none; border-radius: 12px; overflow: hidden; }
-    .btn-primary { background: #9f7aea; border-color: #9f7aea; }
-    .btn-primary:hover { background: #7c3aed; border-color: #7c3aed; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réserver – IT Beauty</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background:#f8fbff; font-family:system-ui,sans-serif; }
+        .title { color:#0066cc; font-weight:700; font-size:2.1rem; }
+        .creneau-btn { 
+            min-width:90px; margin:0.4rem; padding:0.6rem 1rem; border-radius:8px; font-size:0.95rem; 
+        }
+        .creneau-btn.libre:hover { background:#e6f0ff; border-color:#0066cc; }
+        .creneau-btn.pris { 
+            opacity:0.35; background:#f8f9fa; color:#adb5bd; cursor:not-allowed; pointer-events:none; 
+        }
+        .sidebar { background:white; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.08); padding:1.5rem; }
+        .confirmation { background:#d4edda; border:1px solid #badbcc; color:#0f5132; border-radius:12px; padding:2rem; margin-bottom:2.5rem; text-align:center; }
+    </style>
 </head>
 <body>
 
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-7 col-xl-6">
+<div class="container my-5">
 
-      <h2 class="text-center mb-4 fw-bold text-dark">Prendre rendez-vous</h2>
-
-      <?php if ($success): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <strong>Rendez-vous enregistré !</strong><br>
-          Nous vous contacterons rapidement pour confirmer.
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <?php if ($success): ?>
+        <div class="confirmation">
+            <h2 class="h3 fw-bold mb-4">
+                <i class="bi bi-check-circle-fill me-2"></i> Réservation confirmée !
+            </h2>
+            <p class="mb-4">Vous recevrez un email de confirmation.</p>
+            <a href="index.html" class="btn btn-outline-primary btn-lg px-5">Retour à l'accueil</a>
         </div>
-      <?php endif; ?>
 
-      <?php if ($errors): ?>
-        <div class="alert alert-danger">
-          <ul class="mb-0">
-            <?php foreach ($errors as $err): ?>
-              <li><?= htmlspecialchars($err) ?></li>
-            <?php endforeach; ?>
-          </ul>
+    <?php else: ?>
+
+        <?php if ($errors): ?>
+            <div class="alert alert-danger mb-4">
+                <ul class="mb-0"><?php foreach ($errors as $e) echo "<li>$e</li>"; ?></ul>
+            </div>
+        <?php endif; ?>
+
+        <h1 class="title text-center mb-5">Prendre rendez-vous</h1>
+
+        <div class="row g-5">
+
+            <!-- Choix jour + créneaux -->
+            <div class="col-lg-8">
+                <h2 class="h4 fw-bold mb-4">Choisissez votre jour</h2>
+                <input type="date" id="date-picker" class="form-control mb-4" min="<?= $today ?>" required>
+
+                <div id="creneaux-container" class="d-none">
+                    <h3 class="h5 mb-3">Créneaux disponibles</h3>
+                    <div id="creneaux-list" class="d-flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="sidebar position-sticky" style="top:1.5rem;">
+                    <h3 class="h5 fw-bold mb-4 text-center">Votre rendez-vous</h3>
+
+                    <div class="mb-4">
+                        <label class="form-label">Prestation *</label>
+                        <select id="select-service" class="form-select">
+                            <option value="">Choisir...</option>
+                            <?php foreach ($services as $s): ?>
+                                <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['nom']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Prénom *</label>
+                        <input type="text" id="input-prenom" class="form-control" placeholder="Votre prénom">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Nom *</label>
+                        <input type="text" id="input-nom" class="form-control" placeholder="Votre nom">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Email *</label>
+                        <input type="email" id="input-email" class="form-control" placeholder="votre@email.com">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Téléphone</label>
+                        <input type="tel" id="input-tel" class="form-control" placeholder="06XXXXXXXX">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Date & heure *</label><br>
+                        <span id="recap-dh" class="text-muted">— non sélectionné —</span>
+                    </div>
+
+                    <hr>
+
+                    <button type="button" id="btn-confirmer" class="btn btn-primary w-100 py-3 fw-bold" disabled>
+                        Confirmer le rendez-vous
+                    </button>
+                </div>
+            </div>
         </div>
-      <?php endif; ?>
 
-      <div class="card shadow-lg">
-        <div class="card-body p-4 p-md-5">
+        <!-- Formulaire caché -->
+        <form id="form-rdv" method="post">
+            <input type="hidden" name="service_id"   id="hidden-service">
+            <input type="hidden" name="date_rdv"     id="hidden-date">
+            <input type="hidden" name="heure_rdv"    id="hidden-heure">
+            <input type="hidden" name="prenom"       id="hidden-prenom">
+            <input type="hidden" name="nom"          id="hidden-nom">
+            <input type="hidden" name="email"        id="hidden-email">
+            <input type="hidden" name="tel"          id="hidden-tel">
+            <input type="hidden" name="confirmer"    value="1">
+        </form>
 
-          <form method="post" novalidate>
+    <?php endif; ?>
 
-            <!-- Service -->
-            <div class="mb-4">
-              <label class="form-label fw-bold">Prestation *</label>
-              <select name="service_id" class="form-select form-select-lg" required>
-                <option value="">Choisir une prestation</option>
-                <?php foreach ($services as $s): ?>
-                  <option value="<?= $s['id'] ?>" <?= ($form_data['service_id'] ?? '') == $s['id'] ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($s['nom']) ?>
-                  </option>
-                <?php endforeach; ?>
-              </select>
-            </div>
-
-            <!-- Date + Heure -->
-            <div class="row g-3 mb-4">
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Date *</label>
-                <input type="date" name="date_rdv" class="form-control form-control-lg"
-                       min="<?= date('Y-m-d') ?>"
-                       value="<?= htmlspecialchars($form_data['date_rdv'] ?? '') ?>"
-                       required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Heure *</label>
-                <input type="time" name="heure_rdv" class="form-control form-control-lg"
-                       min="09:00" max="19:00" step="1800"
-                       value="<?= htmlspecialchars($form_data['heure_rdv'] ?? '') ?>"
-                       required>
-              </div>
-            </div>
-
-            <!-- Nom / Prénom -->
-            <div class="row g-3 mb-4">
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Prénom *</label>
-                <input type="text" name="prenom" class="form-control form-control-lg"
-                       value="<?= htmlspecialchars($form_data['prenom'] ?? '') ?>" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Nom *</label>
-                <input type="text" name="nom" class="form-control form-control-lg"
-                       value="<?= htmlspecialchars($form_data['nom'] ?? '') ?>" required>
-              </div>
-            </div>
-
-            <!-- Email + Téléphone -->
-            <div class="mb-4">
-              <label class="form-label fw-bold">Email *</label>
-              <input type="email" name="email" class="form-control form-control-lg"
-                     value="<?= htmlspecialchars($form_data['email'] ?? '') ?>" required>
-            </div>
-
-            <div class="mb-4">
-              <label class="form-label fw-bold">Téléphone</label>
-              <input type="tel" name="telephone" class="form-control form-control-lg"
-                     maxlength="10" placeholder="06XXXXXXXX"
-                     value="<?= htmlspecialchars($form_data['telephone'] ?? '') ?>">
-            </div>
-
-            <!-- Bouton -->
-            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fw-bold">
-              CONFIRMER LE RENDEZ-VOUS
-            </button>
-
-          </form>
-
-        </div>
-      </div>
-
-    </div>
-  </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const datePicker = document.getElementById('date-picker');
+    const container  = document.getElementById('creneaux-container');
+    const list       = document.getElementById('creneaux-list');
+    const btnConfirm = document.getElementById('btn-confirmer');
+    const recap      = document.getElementById('recap-dh');
+
+    const inputs = {
+        service: document.getElementById('select-service'),
+        prenom:  document.getElementById('input-prenom'),
+        nom:     document.getElementById('input-nom'),
+        email:   document.getElementById('input-email'),
+        tel:     document.getElementById('input-tel')
+    };
+
+    let selDate  = null;
+    let selHeure = null;
+
+    // Quand on choisit un jour
+    datePicker.addEventListener('change', () => {
+        selDate = datePicker.value;
+        if (!selDate) return;
+
+        // Créneaux de base (tu peux les charger via AJAX plus tard)
+        const base = ['09:00','09:30','10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00'];
+
+        // Simulation créneaux pris (remplace par une vraie requête si tu veux)
+        const pris = []; // ex: ['10:00', '14:30']
+
+        list.innerHTML = '';
+        base.forEach(h => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-outline-secondary creneau-btn';
+            btn.textContent = h;
+            btn.dataset.date = selDate;
+            btn.dataset.heure = h;
+
+            if (pris.includes(h)) {
+                btn.classList.add('pris');
+                btn.disabled = true;
+            } else {
+                btn.classList.add('libre');
+                btn.onclick = () => {
+                    document.querySelectorAll('.creneau-btn').forEach(b => b.classList.remove('btn-primary','active'));
+                    btn.classList.add('btn-primary','active');
+                    selHeure = h;
+                    const dateFr = new Date(selDate).toLocaleDateString('fr-FR', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+                    recap.textContent = dateFr + ' à ' + h;
+                    checkReady();
+                };
+            }
+            list.appendChild(btn);
+        });
+
+        container.classList.remove('d-none');
+        checkReady();
+    });
+
+    // Activation bouton confirmer
+    Object.values(inputs).forEach(inp => {
+        inp.addEventListener('input', checkReady);
+        inp.addEventListener('change', checkReady);
+    });
+
+    function checkReady() {
+        const ok = 
+            selDate && selHeure &&
+            inputs.service.value !== "" &&
+            inputs.prenom.value.trim() !== "" &&
+            inputs.nom.value.trim() !== "" &&
+            inputs.email.value.trim() !== "";
+
+        btnConfirm.disabled = !ok;
+
+        if (ok) {
+            document.getElementById('hidden-service').value = inputs.service.value;
+            document.getElementById('hidden-date').value    = selDate;
+            document.getElementById('hidden-heure').value   = selHeure;
+            document.getElementById('hidden-prenom').value  = inputs.prenom.value.trim();
+            document.getElementById('hidden-nom').value     = inputs.nom.value.trim();
+            document.getElementById('hidden-email').value   = inputs.email.value.trim();
+            document.getElementById('hidden-tel').value     = inputs.tel.value.trim();
+        }
+    }
+
+    btnConfirm.onclick = () => document.getElementById('form-rdv').submit();
+});
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
