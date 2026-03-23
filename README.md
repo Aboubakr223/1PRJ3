@@ -59,7 +59,16 @@ Fichier permettant d’établir la connexion entre l’application PHP et la bas
 Feuille de style utilisée pour la mise en forme visuelle du site.
 
 - salon_reservation.sql:
-Fichier contenant la structure de la base de données utilisée par l’application.
+Fichier contenant la structure et le script SQL de la base de données utilisée par l’application.
++-------------+        +----------------+        +-------------+
+|   clients   |        |  reservations  |        |  services   |
++-------------+        +----------------+        +-------------+
+| id_client PK|<------ | id_client  FK  | -----> | id_service PK|
+| nom         |        | id_service FK  |        | nom_service  |
+| email       |        | id_reservation |        | duree        |
++-------------+        | date_reservation       | prix         |
+                       | heure_reservation      +-------------+
+                       +----------------+
 
 ### Installation et utilisation
 1. Installation du projet
