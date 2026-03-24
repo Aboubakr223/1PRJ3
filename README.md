@@ -55,7 +55,7 @@ Contenu email :
 - date
 - heure
 
-Variables utilisées :
+Variables utilisées (table reservations) :
 {{nom_client}}
 {{service}}
 {{date_rdv}}
@@ -82,8 +82,8 @@ Table utilisée : disponibilites
 
 - **Sécurité**  
  - session_start obligatoire
-- vérification session sur chaque page
-- accès admin protégé
+- vérification session sur chaque page avec ````securite.php````
+- accès admin protégé (identifiant et mot de passe)
 - ````logout.php```` détruit la session
 
 ---
@@ -92,14 +92,15 @@ Table utilisée : disponibilites
 
 1. **Connexion** :  
    Accéder à `login.php` pour se connecter en tant qu’administrateur : http://localhost/itbeauty/admin/login.php
+   puis saisir les identifiants de connexion
 
-2. **Tableau de bord** :  
+3. **Tableau de bord** :  
    Après login, `index.php` ou `dashboard.php` affiche les réservations et statistiques.
 
-3. **Déconnexion** :  
+4. **Déconnexion** :  
    Cliquer sur le bouton `Déconnexion` pour fermer la session.
 
-4. **Email** :  
+5. **Email** :  
    Les notifications utilisent `templates/email_template.html`. Modifier le template pour changer le style ou le contenu des emails.
 
 ---
