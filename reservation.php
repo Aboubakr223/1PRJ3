@@ -1,5 +1,5 @@
 <?php
-// reservation.php — Calendrier libre futur + créneaux transparents
+// reservation.php — Calendrier futur + créneaux pris non cliquables
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmer'])) {
     $tel        = trim($_POST['tel']        ?? '');
 
     if (!$service_id || !$date || !$heure || !$prenom || !$nom || !$email) {
-        $errors[] = "Tous les champs * sont obligatoires.";
+        $errors[] = "Tous les champs * obligatoires.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Email invalide.";
     } else {
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmer'])) {
                 header("Location: reservation.php?success=1");
                 exit;
             } catch (PDOException $e) {
-                $errors[] = "Erreur BDD : " . $e->getMessage();
+                $errors[] = "Erreur : " . $e->getMessage();
             }
         }
     }
@@ -92,10 +92,10 @@ if (isset($_GET['success'])) $success = true;
     <?php if ($success): ?>
         <div class="confirmation">
             <h2 class="h3 fw-bold mb-4">
-                <i class="bi bi-check-circle-fill me-2"></i> Réservation confirmée !
+                <i class="bi bi-check-circle-fill me-2"></i> Réservation envoyée !
             </h2>
-            <p class="mb-4">Vous recevrez un email de confirmation.</p>
-            <a href="index.html" class="btn btn-outline-primary btn-lg px-5">Retour à l'accueil</a>
+            <p class="mb-4">La confirmation de votre réservation vous sera transmise par email.</p>
+            <a href="index.html" class="btn btn-outline-primary btn-lg px-5">Page d'accueil</a>
         </div>
 
     <?php else: ?>
@@ -205,16 +205,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let selDate  = null;
     let selHeure = null;
 
-    // Quand on choisit un jour
     datePicker.addEventListener('change', () => {
         selDate = datePicker.value;
         if (!selDate) return;
 
-        // Créneaux de base (tu peux les charger via AJAX plus tard)
+        // Créneaux de base
         const base = ['09:00','09:30','10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00'];
 
-        // Simulation créneaux pris (remplace par une vraie requête si tu veux)
-        const pris = []; // ex: ['10:00', '14:30']
+        // À terme : remplace par une vraie requête fetch vers un endpoint PHP qui renvoie les créneaux pris
+        const pris = []; // simule créneaux pris — remplace par [] vide ou vraie liste
 
         list.innerHTML = '';
         base.forEach(h => {
@@ -246,7 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
         checkReady();
     });
 
-    // Activation bouton confirmer
     Object.values(inputs).forEach(inp => {
         inp.addEventListener('input', checkReady);
         inp.addEventListener('change', checkReady);
@@ -279,12 +277,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-<?
-session_start();
-
-if(!isset($_SESSION['admin'])) {
-    header("Location: login.php");
-    exit;
-}
-?>
 </html>
