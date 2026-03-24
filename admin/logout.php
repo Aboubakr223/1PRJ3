@@ -76,7 +76,7 @@ button {
 <br>
 
 <a href="login.php">
-    <button class="btn-login">Retour à l'admin</button>
+    <button class="btn-login">Retour à la page de connextion</button>
 </a>
 
 </div>
