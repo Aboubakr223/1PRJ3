@@ -1,17 +1,14 @@
 # 1PRJ3
 1PRJ3 (Projet Unité 2 - B1 Ecole-IT)
 
-# Projet : Application Web de Réservation de Services
+# Projet ITbeauty: Application Web de Réservation de Services
 
 ## Présentation du projet
 
-Ce projet consiste à développer une application web simple complète de réservation de services pour le salon IT-Beauty (coiffure, esthétique ou autre type de prestation).
-L’objectif est de permettre à un utilisateur de consulter les services proposés, sélectionner un créneau horaire disponible et effectuer une réservation en ligne.
-Il permet aussi aux administrateurs du salon à consulter et gérer les rendez-vous.
+ItBeauty est une application web de réservation pour un salon de beauté. Elle permet aux clients de réserver des services, et au personnel administratif de gérer les réservations via un espace admin sécurisé.
+L’application est développée en PHP avec une base de données MySQL, et utilise XAMPP pour le serveur local. Un système de notifications par email est intégré avec des templates HTML professionnels.
 
-Les réservations sont enregistrées dans une base de données relationnelle, ce qui permet de gérer les disponibilités et d’éviter les conflits d’horaires.
-
-Ce projet a été réalisé dans le cadre du module 1PRJ3 du Bachelor 1 de l'Ecole-IT de Valenciennes afin de mettre en pratique les notions fondamentales de programmation web côté client et côté serveur.
+***Ce projet a été réalisé dans le cadre du module 1PRJ3 du Bachelor 1 de l'Ecole-IT de Valenciennes afin de mettre en pratique les notions fondamentales de programmation web côté client et côté serveur.***
 
 ## Objectifs pédagogiques
 
@@ -30,79 +27,82 @@ Les principaux objectifs de ce projet sont :
 - HTML : structure des pages web
 - CSS : mise en forme et design de l’interface
 - PHP : gestion de la logique applicative et des réservations
-- MySQL : stockage des données (services, horaires, réservations)
+- MySQL : stockage des données (services, disponibilités, réservations)
 - XAMPP : environnement de développement local (Apache + MySQL)
 - Git / GitHub : gestion de version et partage du projet
 
 ## Structure du projet
 ````
-itbeauty/
+itbeauty/                     # Nom du fichier du projet
 │
-├── index.html
-├── reservation.php
-├── connexion.php
-├── style.css
-├── salon_reservation.sql
-└── README.md
+├─ index.html                 # Page d’accueil / réservation
+├─ reservation.php            # Traitement des réservations
+├─ style.css                  # Styles CSS du site
+├─ connexion.php              # Connexion à la base de données
+├─ salon_reservation.sql      # Script SQL pour créer la BDD
+│
+├─ admin/                     # Dossier Admin
+│   ├─ index.php              # Page principale admin (tableau de réservations)
+│   ├─ login.php              # Page de connexion admin
+│   ├─ logout.php             # Déconnexion
+│   ├─ admin.php              # Gestion des actions (valider/annuler)
+│   ├─ config.php             # Configuration des identifiants de connexion
+│   ├─ dashboard.php          # Page dashboard (statistiques, accueil admin)
+│   ├─ disponibilites.php     # Gestion des disponibilités
+│   ├─ mail.php               # Envoi d’emails
+│   ├─ securite.php           # Gestion des sessions et sécurités
+│   └─ templates/
+│       └─ email_template.html # Template HTML email
 ````
-### Description des fichiers
-
-- **index.html** : 
-Page d’accueil du site. Elle présente le service et permet d’accéder au système de réservation.
-
-- **reservation.php**:
-Script PHP chargé de gérer la réservation : affichage des créneaux disponibles, traitement des données envoyées par l’utilisateur et enregistrement des réservations dans la base de données.
-
--**connexion.php**:
-Fichier permettant d’établir la connexion entre l’application PHP et la base de données MySQL.
-
-- **style.css**:
-Feuille de style utilisée pour la mise en forme visuelle du site.
-
-- **salon_reservation.sql**:
-Fichier contenant la structure et le script SQL de la base de données utilisée par l’application.
+## Structure de la base de données SQL
 ````
-+-------------+        +----------------+        +-------------+
-|   clients   |        |  reservations  |        |  services   |
-+-------------+        +----------------+        +-------------+
-| id_client PK|<------ | id_client  FK  | -----> | id_service PK|
-| nom         |        | id_service FK  |        | nom_service  |
-| email       |        | id_reservation |        | duree        |
-+-------------+        | date_reservation       | prix         |
-                       | heure_reservation      +-------------+
-                       +----------------+
+┌───────────────┐      ┌───────────────────────┐      ┌─────────────────────┐
+│   services    │      │    reservations       │      │   disponibilites    │
+├───────────────┤      ├───────────────────────┤      ├─────────────────────┤
+│ id  (PK)      │<-----│ service_id  (FK)      │      │ id  (PK)           │
+│ nom           │      │ date_rdv              │      │ jour_semaine        │
+│ description   │      │ heure_rdv             │      │ heure_debut         │
+│ duree_minutes │      │ nom_client            │      │ heure_fin           │
+│ prix_euros    │      │ email_client          │      │ actif               │
+└───────────────┘      │ telephone             │      └─────────────────────┘
+                       |    statut             |   
+                        └───────────────────────┘
 ````
 ### Installation et utilisation
-1. Installation du projet
+1. Installer XAMPP (Apache + MySQL + PHP).
 
-Placer le dossier du projet dans le répertoire :
-````
-C:\xampp\htdocs\
-````
-2. Démarrer le serveur local
+2. Copier le dossier itbeauty dans le dossier htdocs de XAMPP  : ````C:\xampp\htdocs\itbeauty````
 
-Lancer XAMPP puis démarrer :
-Apache + MySQL
+3.Créer la base de données :
+Importer le fichier ````salon_reservation.sql```` via phpMyAdmin.
 
-3. Importer la base de données:
-- Ouvrir phpMyAdmin
-- Créer une base de données
-- Importer le fichier :
-````
-salon_reservation.sql
-````
-4. Lancer l’application
-Ouvrir le navigateur et accéder à :
-````
-http://localhost/itbeauty/index.html
-````
+4. Modifier ````connexion.php````et ````admin/config.php```` si nécessaire pour adapter le nom de la BDD, utilisateur et mot de passe.
+
+5. Lancer XAMPP et démarrer Apache et MySQL.
+
+6. Accéder à l’application :
+Client : http://localhost/itbeauty/index.html
+Admin : http://localhost/itbeauty/admin/login.php
+
 ## Fonctionnalités principales
 
-- Consultation des services disponibles et des crénaux horaires
-- Sélection d’un créneau horaire
-- Enregistrement des réservations dans la base de données
-- Vérification des disponibilités pour éviter les double-réservations
+**Pour les clients:**
+- Page de réservation avec choix du service, date et heure.
+- confirmation de réservation
+- Réception automatique d’un email de confirmation (template HTML avec logo, détails de la réservation).
+
+**Pour l’administrateur:**
+
+- Page login sécurisée
+- Gestion des sessions admin.
+- Tableau de bord avec toutes les réservations.
+- Actions sur les réservations :
+Valider ou Annuler
+- Déconnexion avec retour à la page d’accueil.
+- Email de confirmation au client.
+- Email de notification au salon
+- Template HTML professionnel (admin/templates/email_template.html) avec logo et informations complètes (client, service, date, heure).
   
 # Auteur
 
-Projet réalisé par Aboubakr Sidick Sidibe et Mustapha Antitene.
+Projet réalisé par Aboubakr Sidick Sidibe et Mustapha-Yacine Antitene.
