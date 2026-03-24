@@ -36,7 +36,7 @@ CREATE TABLE `disponibilites` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `disponibilites`
+-- Jeu de données de la table `disponibilites`
 --
 
 INSERT INTO `disponibilites` (`id`, `jour_semaine`, `heure_debut`, `heure_fin`, `actif`) VALUES
@@ -66,7 +66,7 @@ CREATE TABLE `reservations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `reservations`
+-- Jeu de données de la table `reservations`
 --
 
 INSERT INTO `reservations` (`id`, `service_id`, `date_rdv`, `heure_rdv`, `nom_client`, `email_client`, `telephone`, `statut`) VALUES
@@ -90,7 +90,7 @@ CREATE TABLE `services` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `services`
+-- Jeu de données de la table `services`
 --
 
 INSERT INTO `services` (`id`, `nom`, `description`, `duree`, `prix_euros`) VALUES
