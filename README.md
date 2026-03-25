@@ -1,4 +1,4 @@
- Module de Gestion des Emails
+Module de Gestion des Emails
 Projet : PRJ3_1 | Branche : mail
 Ce module centralise toute la logique d'envoi de courriels automatique pour l'application. Il a été conçu pour offrir une alternative fiable et sécurisée à l'envoi d'emails standard.
 
