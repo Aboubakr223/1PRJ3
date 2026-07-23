@@ -1,5 +1,3 @@
-# 1PRJ3
-1PRJ3 (Projet Unité 2 - B1 Ecole-IT)
 
 # Projet ITbeauty: Application Web de Réservation de Services
 
@@ -8,9 +6,9 @@
 ItBeauty est une application web de réservation pour un salon de beauté. Elle permet aux clients de réserver des services, et au personnel administratif de gérer les réservations via un espace admin sécurisé.
 L’application est développée en PHP avec une base de données MySQL, et utilise XAMPP pour le serveur local. Un système de notifications par email est intégré avec des templates HTML professionnels.
 
-***Ce projet a été réalisé dans le cadre du module 1PRJ3 du Bachelor 1 de l'Ecole-IT de Valenciennes afin de mettre en pratique les notions fondamentales de programmation web côté client et côté serveur.***
+***Ce projet a été réalisé afin de mettre en pratique les notions fondamentales de programmation web côté client et côté serveur.***
 
-## Objectifs pédagogiques
+## Objectifs :
 
 Les principaux objectifs de ce projet sont :
 
